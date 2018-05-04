@@ -2,7 +2,7 @@ module.exports = {
 main:{
 
   flexDirection: 'row',
-  justifyContent: 'space-around', 
+  justifyContent: 'space-around',
   marginLeft: 0,
   marginRight: 0,
     top: -20,
@@ -55,6 +55,11 @@ footer: {
   backgroundColor: '#484f4f',
   marginTop:12,
     height: 55,
+},
+footer2: {
+  marginTop:12,
+  marginBottom:12,
+
 },
 topoimg: {
   width: 48,

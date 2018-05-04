@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Text, View, TouchableOpacity, ListView } from 'react-native'
-import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux'
 
 
@@ -8,7 +7,7 @@ const ListItem = (props) => {
     return (
         <View style={{ flex: 1,
                        padding: 10,
-                       flexDirection : 'row', 
+                       flexDirection : 'row',
                        backgroundColor : '#dfdfdf'}}>
             <Text style={{ flex : 1 }}>
                 { props.itemCod }
@@ -23,21 +22,8 @@ const ListItem = (props) => {
 class List extends Component {
     constructor(props) {
         super(props)
-
-      this.props.dataSourceFetch()
-      this.createDataSource(this.props[this.props.listName]);
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.createDataSource(nextProps);
-    }
-
-    createDataSource( obj ) {
-        const ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 !== r2
-        });
-        this.dataSource = ds.cloneWithRows(obj);
-    }
 
     renderRow(item) {
       return <ListItem
@@ -45,7 +31,6 @@ class List extends Component {
         itemName={item.itemName}
         onPress={() => Actions.client({ item })} />
     }
-
 
     render () {
         return (

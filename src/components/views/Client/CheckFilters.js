@@ -2,44 +2,36 @@ import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
-const CheckFilters = (props) => {
+export default class CheckFilters extends Component {
+  state = {
+    checked: false,
+    checked2: false,
+    checked3: false,
+  };
+  render() {
     return (
-              <View
-                style={{ flexDirection : 'row',
-                         flexWrap : 'wrap',
-                         justifyContent : 'center'
-                }}
-              >
-                  <CheckBox
-                    center
-                    title='FECHADOS'
-                    iconLeft
-                    iconType='material'
-                    checkedIcon="done"
-                    checked={true}
-                  />
-
-                  <CheckBox
-                    center
-                    title='ABERTOS'
-                    iconLeft
-                    iconType='material'
-                    checkedIcon="done"
-                    checked={true}
-                  />
-
-                  <CheckBox
-                    center
-                    title='SINCRONIZADOS'
-                    iconLeft
-                    iconType='material'
-                    checkedIcon="done"
-                    checked={true}
-                  />
-             </View>
-
-
+      <View
+        style={{ flexDirection : 'row',
+          flexWrap : 'wrap',
+          justifyContent : 'center'
+        }}
+        >
+        <CheckBox
+          title="Fechados"
+          checked={this.state.checked}
+          onPress={() => this.setState({ checked: !this.state.checked })}
+          />
+        <CheckBox
+          title="Abertos"
+          checked={this.state.checked2}
+          onPress={() => this.setState({ checked2: !this.state.checked2 })}
+          />
+        <CheckBox
+          title="sincronizados"
+          checked={this.state.checked3}
+          onPress={() => this.setState({ checked3: !this.state.checked3 })}
+          />
+      </View>
     )
+  }
 }
-
-export default CheckFilters
