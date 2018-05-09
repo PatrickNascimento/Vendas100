@@ -30,7 +30,7 @@ export default class ClientHeader extends Component {
     var filtro = exlist.i;
     //alert(filtro)
     db.transaction((tx) =>{
-      tx.executeSql('select * from clientes limit 1',[],(tx,results) => {
+      tx.executeSql('SELECT * FROM clientes where CDCLIFOR like "'+filtro+'%"',[],(tx,results) => {
         var len = results.rows.length;
         console.log(len);
         if(len>0){
@@ -44,50 +44,50 @@ export default class ClientHeader extends Component {
 
   renderListItems = () => this.state.row.map((item) => (
 
-        <View style={{
-            backgroundColor: '#dcdcdc',
-            borderRadius: 5,
-            margin: 10,
-            padding: 10,
-            flexDirection : 'column' }}>
-            <View style={{ width: '100%', flexDirection : 'row'}}>
-              <TextLeft>{ 'R. Soc.:'}</TextLeft>
-              <TextRight> {item.NMCLIFOR} </TextRight>
-            </View>
+    <View style={{
+        backgroundColor: '#dcdcdc',
+        borderRadius: 5,
+        margin: 10,
+        padding: 10,
+        flexDirection : 'column' }}>
+        <View style={{ width: '100%', flexDirection : 'row'}}>
+          <TextLeft>{ 'R. Soc.:'}</TextLeft>
+          <TextRight> {item.NMCLIFOR} </TextRight>
+        </View>
 
-            <View style={{ flexDirection : 'row'}}>
-              <TextLeft>{ 'CNPJ:'}</TextLeft>
-              <TextRight>{ 'ALKJDFLKJF' }</TextRight>
-            </View>
+        <View style={{ flexDirection : 'row'}}>
+          <TextLeft>{ 'CNPJ:'}</TextLeft>
+          <TextRight>{item.CPFCNPJ}</TextRight>
+        </View>
 
-            <View style={{ flexDirection : 'row'}}>
-              <TextLeft>{ 'Tel.:'}</TextLeft>
-              <TextRight>{ 'ALKJDFLKJF' }</TextRight>
-            </View>
+        <View style={{ flexDirection : 'row'}}>
+          <TextLeft>{ 'Tel.:'}</TextLeft>
+          <TextRight>{item.NUFONE}</TextRight>
+        </View>
 
-            <View style={{ flexDirection : 'row'}}>
-              <TextLeft>{ 'End.:'}</TextLeft>
-              <TextRight>{ 'ALKJDFLKJFALKJDFLKJFALKJDFLKJFALKJDFLKJFALKJDFLKJF' }</TextRight>
-            </View>
+        <View style={{ flexDirection : 'row'}}>
+          <TextLeft>{ 'End.:'}</TextLeft>
+          <TextRight>{item.DEENDERECO}</TextRight>
+        </View>
 
-            <View style={{ flexDirection : 'row'}}>
-              <TextLeft>{ 'Sit.:'}</TextLeft>
-              <TextRight>{ 'ALKJDFLKJF' }</TextRight>
-            </View>
+        <View style={{ flexDirection : 'row'}}>
+          <TextLeft>{ 'Sit.:'}</TextLeft>
+          <TextRight>{item.TPSTATUS}</TextRight>
+        </View>
 
-            <View style={{ flexDirection : 'row'}}>
-              <TextLeft>{ 'Saldo:'}</TextLeft>
-              <TextRight>{ 'ALKJDFLKJF' }</TextRight>
-            </View>
-          </View>
+        <View style={{ flexDirection : 'row'}}>
+          <TextLeft>{ 'Saldo:'}</TextLeft>
+          <TextRight>{item.VLSALDO}</TextRight>
+        </View>
+      </View>
     )
   );
 
   render() {
     return (
-        <View>
-          {this.renderListItems()}
-        </View>
+      <View>
+        {this.renderListItems()}
+      </View>
     )
   }
 }

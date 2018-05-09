@@ -7,6 +7,7 @@ import OrderItem from '../OrderItem/OrderItem'
 import ClientHeader from './ClientHeader'
 import CheckFilters from './CheckFilters'
 
+
 const css =  require('../MenuPrincipal/styles/style');
 
 const {

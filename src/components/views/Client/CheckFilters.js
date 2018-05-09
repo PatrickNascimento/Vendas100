@@ -27,7 +27,7 @@ export default class CheckFilters extends Component {
           onPress={() => this.setState({ checked2: !this.state.checked2 })}
           />
         <CheckBox
-          title="sincronizados"
+          title="Sincronizados"
           checked={this.state.checked3}
           onPress={() => this.setState({ checked3: !this.state.checked3 })}
           />

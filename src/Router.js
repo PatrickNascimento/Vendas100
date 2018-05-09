@@ -29,10 +29,9 @@ const RouterComponent = () => {
         </Scene>
 
         <Scene key="main" initial>
-
         <Scene key="menuPrincipal" component={MenuPrincipal} title="Menu Principal" initial/>
           <Scene key="listClients" component={ListClients} title="Lista de Clientes" />
-          <Scene key="client" component={Client} title="Client Detail"/>
+          <Scene key="client" component={Client} title="Cliente Detalhes"/>
           <Scene key="products" component={ProductsList} title="Lista de Produtos"/>
           <Scene key="configuration" component={Configuration} title="Configuração"/>
         </Scene>

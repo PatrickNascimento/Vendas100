@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput,StyleSheet, TouchableOpacity,TouchableHighlight } from 'react-native'
+import { Text, View, Alert,TextInput,StyleSheet, TouchableOpacity,TouchableHighlight } from 'react-native'
 import { Input, TouchableBox } from '../../utils'
 import Expo, { SQLite } from 'expo';
+import { Button,Icon } from 'react-native-elements'
 import axios from 'axios'
-
+import {limpaclientes,ler} from './actions/acoes.js'
+var cc = '';
 
 const db = SQLite.openDatabase('db.db');
 
@@ -28,6 +30,14 @@ class Configuration extends Component {
   }
 
 ).catch(e => console.log('error no catch: ', e))
+
+axios.get('http://10.1.1.39:211/produtos')
+.then(resp => {
+  //console.log(resp.data.result)
+  this.setState({ itemsprodutos : resp.data.result })
+}
+
+).catch(e => console.log('error no catch: ', e))
 }
 
 sync(code,name,city,key){
@@ -50,7 +60,6 @@ syncClientes(CDCLIFOR,NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TP
   db.transaction(
     tx => {
       tx.executeSql('insert into clientes (CDCLIFOR, NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[CDCLIFOR, NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR]);
-      console.log(tx);
       console.log('gerado carga de clientes com sucesso');
     }
   );
@@ -67,6 +76,28 @@ SyncSendClientes(){
 }
 
 
+syncProdutos(CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX){
+  {/*Lançamento de produtos*/}
+  db.transaction(
+    tx => {
+      tx.executeSql('insert into produtos (CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX) values (?,?,?,?,?,?,?,?,?,?,?)',[CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX]);
+      console.log('gerado carga de produtos com sucesso');
+    }
+  );
+}
+
+SyncSendProdutos(){
+  {/*Mapeia os registros do electron e os insere no Sqlite*/}
+  return this.state.itemsprodutos.map((item) =>(
+    this.syncProdutos(item.CDPRO,item.CDPROREF,item.DEPROLONG,item.IDATIVO,
+      item.DEPRO,item.CDUNMED,item.VLVENDA,item.VLVENDAMIN,
+      item.VALOR,item.QTSALDO,item.PEDESCMAX)
+    )
+  )
+}
+
+
+
 syncClientesmanual(){
   {/*inserindo registro manualmente*/}
   db.transaction(
@@ -79,17 +110,10 @@ syncClientesmanual(){
 }
 
 criar(){
-  db.transaction(tx => {
-    {/* Criando a tabela de clientes via SQLite*/}
-    tx.executeSql(      
-      'create table if not exists clientes (CDCLIFOR text, NMFANTASIA text, NUFONE text, DEENDERECO text,DEBAIRRO text,NMCID text,CDUF text,DEOBS text,TPSTATUS text,ATIVO text,CPFCNPJ text,VLSALDO numeric,DEPRAZO text,VLSALDODEV numeric,NMCLIFOR text);'
-    );
-    console.log(tx);
-    console.log('Tabela criada com sucesso');
-  });
+
 }
 
-drop(){
+limpaclientes(){
   db.transaction(tx => {
     {/* dropar a tabela de clientes via SQLite*/}
     tx.executeSql(
@@ -98,11 +122,20 @@ drop(){
     console.log(tx);
     console.log('Tabela dropada com sucesso');
   });
+
+  db.transaction(tx => {
+    {/* Criando a tabela de clientes via SQLite*/}
+    tx.executeSql(
+      'create table if not exists clientes (CDCLIFOR text, NMFANTASIA text, NUFONE text, DEENDERECO text,DEBAIRRO text,NMCID text,CDUF text,DEOBS text,TPSTATUS text,ATIVO text,CPFCNPJ text,VLSALDO numeric,DEPRAZO text,VLSALDODEV numeric,NMCLIFOR text);'
+    );
+    console.log(tx);
+    console.log('Tabela criada com sucesso');
+  });
 }
 
-ler() {
+lerclientes() {
   db.transaction((tx) =>{
-    tx.executeSql('select * from clientes',[],(tx,results) => {
+    tx.executeSql('select rowid FROM clientes',[],(tx,results) => {
       var len = results.rows.length;
       console.log(len);
       var row = results.rows;
@@ -112,47 +145,91 @@ ler() {
   });
 }
 
+lerprodutos() {
+  db.transaction((tx) =>{
+    tx.executeSql('select rowid from produtos',[],(tx,results) => {
+      var len = results.rows.length;
+      console.log(len);
+      var row = results.rows;
+      console.log('->'+JSON.stringify(row));
+
+    });
+  });
+}
+
+envia2ERP() {
+  axios.post("http://10.1.1.39:3000/receive",
+  data = {
+    "Nome": "Patrick Nascimento",
+    "Nome2": "Luiz Ferrari",
+    "Nome3": "Arthur Picket",
+  })
+  .then(function(response){
+    console.log('Enviado com sucesso')
+  });
+}
+
 render () {
   return (
     <View style={styles.container}>
 
-
-      <TouchableHighlight
-        style={styles.buttonsync}
-        onPress={() => this.SyncSend()}
-        >
-        <Text style={styles.textButton}>Gerar Carga Usuários</Text>
-      </TouchableHighlight>
-
-      <TouchableHighlight
-        style={styles.buttonsync}
+      <Button
+        small
+        icon={{name: 'android', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#ff4d4d'
         onPress={() => this.SyncSendClientes()}
-        >
-        <Text style={styles.textButton}>Gerar Carga Clientes</Text>
-      </TouchableHighlight>
+        title='SINCRONIZAR CLIENTES' />
 
-      <TouchableHighlight
-        style={styles.buttonsync}
-        onPress={() => this.criar()}
-        >
-        <Text style={styles.textButton}>Criar Tabela de Clientes</Text>
-      </TouchableHighlight>
+      <Button
+        small
+        icon={{name: 'trash', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#ff4d4d'
+        onPress={() =>   Alert.alert(
+          'Confirma?',
+          'Está ação limparar todos os dados',
+          [
+            {text: 'Cancel', onPress: () => console.log('Ação cancelada'), style: 'cancel'},
+            {text: 'OK', onPress: () => {limpaclientes();}},
+          ],
+          { cancelable: false }
+        )}
+        title='LIMPAR DADOS CLIENTES' />
 
-      <TouchableHighlight
-        style={styles.buttonsync}
-        onPress={() => this.ler()}
-        >
-        <Text style={styles.textButton}>Clientes Console</Text>
-      </TouchableHighlight>
-      <TouchableHighlight
-        style={styles.buttonsync}
-        onPress={() => this.drop()}
-        >
-        <Text style={styles.textButton}>Dropar tabela Clientes</Text>
-      </TouchableHighlight>
+      <Button
+        small
+        icon={{name: 'search', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#222222'
+        onPress={() => this.lerclientes()}
+        title='EXIBIR CLIENTE NO TERMINAL' />
+
+      <Button
+        small
+        icon={{name: 'th-large', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#ff4d4d'
+        onPress={() => this.SyncSendProdutos()}
+        title='SINCRONIZAR PRODUTOS' />
+
+      <Button
+        small
+        icon={{name: 'trash', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#ff4d4d'
+        onPress={() => Alert.alert('teste button ok')}
+        title='LIMPAR DADOS PRODUTOS' />
+
+      <Button
+        small
+        icon={{name: 'search', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#222222'
+        onPress={() => this.lerprodutos()}
+        title='EXIBIR PRODUTOS NO TERMINAL' />
+
+      <Button
+        small
+        icon={{name: 'server', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#000000'
+        onPress={() => envia2ERP()}
+        title='SINCRONIZAR COM ERP' />
     </View>
-
-
   )
 }
 }

@@ -19,28 +19,20 @@ const ProductItem = (props) => {
                 style={{
                          fontWeight: 'bold',
                      }}>
-                         { String(Number(props.rowIndex) + 1) + ' - ' }
-            </Text>
-
-            <Text
-              style={{
-                       fontWeight: 'bold'
-                     }}
-            >
-              {props.product}
+                         {props.id+ ' - '}
             </Text>
 
             <Text
               style={{
                       fontWeight: 'bold'}}
               >
-              { props.balance }
+              { props.produto }
             </Text>
           </View>
           <View style={{ marginTop : 5 }}>
             <Text>
             { 'Cod. Prod.:  '}
-            { props.codProd }
+            { props.codPro }
             </Text>
           </View>
     </TouchableBox>

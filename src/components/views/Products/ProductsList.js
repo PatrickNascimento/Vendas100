@@ -1,107 +1,165 @@
-import React, { Component } from 'react';
-import { ListView, View, Text } from 'react-native';
-import { connect } from 'react-redux';
+import Expo, { SQLite } from 'expo';
+import { Font } from 'expo';
+import React, { Component } from "react";
 import ProductItem from './ProductItem';
-import { productsFetchList, productGetDetail } from '../../../actions';
-import { Actions } from 'react-native-router-flux'
+import { Input } from 'react-native-elements';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import {
+  Kaede,
+  Hoshi,
+  Jiro,
+  Isao,
+  Madoka,
+  Akira,
+  Hideo,
+  Kohana,
+  Makiko,
+  Sae,
+  Fumi,
+} from 'react-native-textinput-effects';
+import {
+  TouchableHighlight,
+  Text,
+  View,
+  AsyncStorage,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TextInput,
+} from "react-native";
+import { Actions } from "react-native-router-flux";
 
-import _ from 'lodash'
+var exlist = '';
 
-class ProductsList extends Component {
-  componentWillMount() {
+const db = SQLite.openDatabase('db.db');
 
-      this.props.productsFetchList()
-      this.createDataSource(this.props);
+export default class ProductsList extends Component {
+
+
+  constructor() {
+    super();
+    this.state = {
+    row: []
+  };
+
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.createDataSource(nextProps);
+  componentDidMount() {
+    this.parseData();
   }
 
-  createDataSource({ products }) {
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
+  dados(i){
+    exlist = {i}
+    Actions.client();
+  }
+
+  parseData() {
+    var row = [];
+    db.transaction((tx) =>{
+      tx.executeSql('SELECT rowid, CDPRO, DEPRO FROM produtos',[],(tx,results) => {
+        var len = results.rows.length;
+        console.log(len);
+        if(len>0){
+          var row = results.rows._array;
+          console.log(row);
+          this.setState({row});
+        }
+      });
     });
-
-    this.dataSource = ds.cloneWithRows(products);
   }
 
-  handleClientDetail () {
 
-  }
 
-  renderRow(product, sectionId, rowId) {
-    return <ProductItem
-      rowIndex={rowId}
-      product={product.description}
-      description={product.long_description}
-      balance={product.balance}
-      codProd={product.id}
-      onPress={() => Actions.product({ product })} />
-  }
+  renderListItems = () => this.state.row.map((item) => (
 
-  render () {
-    return (
-      <View>
-          <ListView
-            enableEmptySections
-            dataSource={this.dataSource}
-            renderRow={this.renderRow}
-          />
-      </View>
-    );
-  }
+    <ProductItem
+      id={item.rowid}
+      produto={item.DEPRO}
+      codPro={item.CDPRO}
+      onPress={() => this.dados(item.CDPRO)} />
+  )
+);
+
+/** seção de Busca*/
+
+buscarParse(busca) {
+  var row = [];
+  db.transaction((tx) =>{
+    tx.executeSql('SELECT rowid,CDPRO,DEPRO from produtos where DEPRO like "'+busca+'%"',[],(tx,results) => {
+      var len = results.rows.length;
+      console.log(busca);
+      console.log(len);
+      if(len>0){
+        var row = results.rows._array;
+        console.log(row);
+        this.setState({row});
+      }
+    });
+  });
 }
 
-const mapStateToPropsBack = state => {
-  return {
-    products : state.products.productsList,
+
+render() {
+  return (
+    <View style={styles.container}>
+      <View style={[styles.card1, { backgroundColor: '#F9F7F6' }]}>
+        <Hoshi label={'Procurar'} borderColor={'#b76c94'} maskColor={'#F9F7F6'}
+           onChangeText={(buscar) => this.buscarParse(buscar)} />
+       </View>
+      <ScrollView>
+
+        {this.state.row.length >= 1 ? this.renderListItems() : null }
+      </ScrollView>
+
+    </View>
+  );
+}
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginTop: 10
+  },
+  button: {
+    backgroundColor: "skyblue",
+    paddingTop: 15,
+    paddingBottom: 15,
+    marginBottom: 5,
+    marginTop: 15
+  },
+  card1: {
+   paddingVertical: 3,
+ },
+ card2: {
+   padding: 16,
+ },
+ input: {
+   marginTop: 2,
+ },
+ title: {
+   paddingBottom: 6,
+   textAlign: 'center',
+   color: '#404d5b',
+   fontSize: 20,
+   fontWeight: 'bold',
+   opacity: 0.8,
+ },
+  textButton: {
+    textAlign: "left",
+    fontSize: 18,
+    color: "white"
+  },
+  datalista: {
+    marginBottom: 5,
+    padding: 20,
+    marginTop: 5,
+    height: 150,
+    borderRadius: 10,
+    backgroundColor: "#888888",
   }
-};
+});
 
-const mapStateToProps = state => ({
-    products : [{
-        id : 246,
-        active : true,
-        description : 'CANETA',
-        long_description : 'CANETA PARA PINTURA',
-        balance: '(KG)',
-        type : {
-            description : '0',
-            price_list : {
-                value : 'R$ 12.00'
-            }
-        }
-    },
-    {
-        id : 4020,
-        active : false,
-        description : 'PAPEL',
-        long_description : 'papel sulfite',
-        balance: '(KG)',
-        type : {
-            description : '2',
-            price_list : {
-                value : 'R$ 23.00'
-            }
-        }
-    },
-    {
-        id : 3708,
-        active : false,
-        description : 'PINCEL',
-        long_description : 'pincel atomico',
-        balance: '(KG)',
-        type : {
-            description : '2',
-            price_list : {
-                value : 'R$ 1.00'
-            }
-        }
-    }]
-})
-
-export default connect(
-    mapStateToProps,
-  { productsFetchList,
-    productGetDetail })(ProductsList);
+export {exlist};

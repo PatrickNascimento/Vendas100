@@ -33,8 +33,6 @@ var exlist = '';
 
 const db = SQLite.openDatabase('db.db');
 
-
-
 export default class Clientslist extends Component {
 
   async componentDidMount() {
@@ -63,7 +61,7 @@ export default class Clientslist extends Component {
   parseData() {
     var row = [];
     db.transaction((tx) =>{
-      tx.executeSql('SELECT codigo,nome,email,comentario FROM usuarios',[],(tx,results) => {
+      tx.executeSql('SELECT CDCLIFOR,NMFANTASIA,NMCID FROM clientes',[],(tx,results) => {
         var len = results.rows.length;
         console.log(len);
         if(len>0){
@@ -80,10 +78,10 @@ export default class Clientslist extends Component {
   renderListItems = () => this.state.row.map((item) => (
 
     <ClientItem
-      client={item.nome}
-      codCli={item.codigo}
-      cidade={item.email}
-      onPress={() => this.dados(item.codigo)} />
+      client={item.NMFANTASIA}
+      codCli={item.CDCLIFOR}
+      cidade={item.NMCID}
+      onPress={() => this.dados(item.CDCLIFOR)} />
   )
 );
 
@@ -92,7 +90,7 @@ export default class Clientslist extends Component {
 buscarParse(busca) {
   var row = [];
   db.transaction((tx) =>{
-    tx.executeSql('SELECT codigo,nome,email,comentario FROM usuarios where nome like "'+busca+'%"',[],(tx,results) => {
+    tx.executeSql('SELECT CDCLIFOR,NMFANTASIA,NMCID FROM clientes where NMFANTASIA like "'+busca+'%"',[],(tx,results) => {
       var len = results.rows.length;
       console.log(busca);
       console.log(len);

@@ -59,10 +59,15 @@ export default class App extends React.Component {
         'create table if not exists clientes (CDCLIFOR text, NMFANTASIA text, NUFONE text, DEENDERECO text,DEBAIRRO text,NMCID text,CDUF text,DEOBS text,TPSTATUS text,ATIVO text,CPFCNPJ text,VLSALDO numeric,DEPRAZO text,VLSALDODEV numeric,NMCLIFOR text);'
       );
       });
+
+
+    db.transaction(txp => {
+      {/* Criando a tabela de Produtos via SQLite*/}
+      txp.executeSql(
+        'create table if not exists produtos (CDPRO text, CDPROREF text,DEPROLONG text, IDATIVO text, DEPRO text, CDUNMED text, VLVENDA integer, VLVENDAMIN numeric, VALOR numeric, QTSALDO numeric, PEDESCMAX numeric);'
+      );
+      });
     };
-
-
-
 
   render() {
     return (
