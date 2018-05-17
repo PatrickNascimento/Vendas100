@@ -1,7 +1,7 @@
 import Expo, { SQLite } from 'expo';
 import { Font } from 'expo';
 import React, { Component } from "react";
-import ClientItem from './ClientItem'
+import PedidoItem from './PedidoItem'
 import { Input } from 'react-native-elements';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
@@ -35,7 +35,7 @@ dataSource = [];
 
 const db = SQLite.openDatabase('db.db');
 
-export default class Clientslist extends Component {
+export default class ListPedidos extends Component {
 
   async componentDidMount() {
      await Font.loadAsync({
@@ -77,7 +77,7 @@ export default class Clientslist extends Component {
   }
 
   renderRow = (source) => {
-      return <ClientItem
+      return <PedidoItem
         client={source.item.NMFANTASIA}
         codCli={source.item.CDCLIFOR}
         cidade={source.item.NMCID}

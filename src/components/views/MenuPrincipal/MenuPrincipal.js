@@ -16,8 +16,6 @@ import  {
   ScrollView,
 } from 'react-native';
 
-
-
 const css =  require('./styles/style');
 
 const {
@@ -60,11 +58,10 @@ export default class App extends React.Component {
       );
       });
 
-
     db.transaction(txp => {
       {/* Criando a tabela de Produtos via SQLite*/}
       txp.executeSql(
-        'create table if not exists produtos (CDPRO text, CDPROREF text,DEPROLONG text, IDATIVO text, DEPRO text, CDUNMED text, VLVENDA integer, VLVENDAMIN numeric, VALOR numeric, QTSALDO numeric, PEDESCMAX numeric);'
+        'create table if not exists produtos (CDPRO text, CDPROREF text,DEPROLONG text, IDATIVO text, DEPRO text, CDUNMED text, VLVENDA integer, VLVENDAMIN numeric, VLPESOMED numeric, VALOR numeric, QTSALDO numeric, PEDESCMAX numeric);'
       );
       });
     };
@@ -83,8 +80,7 @@ export default class App extends React.Component {
           <View style={main}>
 
             <TouchableOpacity
-              onPress={() => metasis('acao')}>
-
+              onPress={() => Actions.listPedidos()}>
               <Image style={icon} source={require('./imgs/carrinho.png')} />
               <Text style={ic1}>Novo pedido</Text>
             </TouchableOpacity>
@@ -134,7 +130,6 @@ export default class App extends React.Component {
 
         <View style={footer}>
         </View>
-
       </View>
 
     );

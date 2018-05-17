@@ -5,13 +5,22 @@ import Expo, { SQLite } from 'expo';
 import { Button,Icon } from 'react-native-elements'
 import axios from 'axios'
 import {limpaclientes,ler} from './actions/acoes.js'
-var cc = '';
+import { Actions } from 'react-native-router-flux'
+import ProgressCircle from 'react-native-progress-circle'
+import Modal from 'react-native-modal'; // 2.4.0
 
+var cc = '';
 const db = SQLite.openDatabase('db.db');
 
 class Configuration extends Component {
   constructor (props ) {
     super (props)
+
+    this.state = {
+      visibleModal: null,
+      percent: 0,
+      totalreg : 0,
+    };
   }
 
   componentWillMount () {
@@ -56,47 +65,50 @@ SyncSend(){
 }
 
 
+
+
 syncClientes(CDCLIFOR,NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR){
   db.transaction(
     tx => {
       tx.executeSql('insert into clientes (CDCLIFOR, NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[CDCLIFOR, NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR]);
-      console.log('gerado carga de clientes com sucesso');
+
     }
   );
 }
 
 SyncSendClientes(){
-  return this.state.itemsclientes.map((item) =>(
+  return this.state.itemsclientes.map((item,index) =>(
     this.syncClientes(item.CDCLIFOR, item.NMFANTASIA, item.NUFONE,
       item.DEENDERECO,item.DEBAIRRO,item.NMCID,
       item.CDUF,item.DEOBS,item.TPSTATUS,item.ATIVO,item.CPFCNPJ,
-      item.VLSALDO,item.DEPRAZO,item.VLSALDODEV,item.NMCLIFOR)
+      item.VLSALDO,item.DEPRAZO,item.VLSALDODEV,item.NMCLIFOR),
+      this.setState({percent: index}),
+      this.setState({ visibleModal: 1 })
     )
+
   )
 }
 
 
-syncProdutos(CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX){
+syncProdutos(CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VLPESOMED,VALOR,QTSALDO,PEDESCMAX){
   {/*Lançamento de produtos*/}
   db.transaction(
     tx => {
-      tx.executeSql('insert into produtos (CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX) values (?,?,?,?,?,?,?,?,?,?,?)',[CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VALOR,QTSALDO,PEDESCMAX]);
-      console.log('gerado carga de produtos com sucesso');
+      tx.executeSql('insert into produtos (CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VLPESOMED,VALOR,QTSALDO,PEDESCMAX) values (?,?,?,?,?,?,?,?,?,?,?,?)',[CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VLPESOMED,VALOR,QTSALDO,PEDESCMAX]);
+
     }
   );
 }
 
 SyncSendProdutos(){
-  {/*Mapeia os registros do electron e os insere no Sqlite*/}
+
   return this.state.itemsprodutos.map((item) =>(
     this.syncProdutos(item.CDPRO,item.CDPROREF,item.DEPROLONG,item.IDATIVO,
-      item.DEPRO,item.CDUNMED,item.VLVENDA,item.VLVENDAMIN,
+      item.DEPRO,item.CDUNMED,item.VLVENDA,item.VLVENDAMIN,item.VLPESOMED,
       item.VALOR,item.QTSALDO,item.PEDESCMAX)
     )
   )
 }
-
-
 
 syncClientesmanual(){
   {/*inserindo registro manualmente*/}
@@ -120,7 +132,7 @@ limpaclientes(){
       'Drop table clientes;'
     );
     console.log(tx);
-    console.log('Tabela dropada com sucesso');
+    console.log('Tabela clientes dropada com sucesso');
   });
 
   db.transaction(tx => {
@@ -129,13 +141,34 @@ limpaclientes(){
       'create table if not exists clientes (CDCLIFOR text, NMFANTASIA text, NUFONE text, DEENDERECO text,DEBAIRRO text,NMCID text,CDUF text,DEOBS text,TPSTATUS text,ATIVO text,CPFCNPJ text,VLSALDO numeric,DEPRAZO text,VLSALDODEV numeric,NMCLIFOR text);'
     );
     console.log(tx);
-    console.log('Tabela criada com sucesso');
+    console.log('Tabela clientes criada com sucesso');
   });
 }
 
+limpaprodutos(){
+  db.transaction(tx => {
+    {/* dropar a tabela de produtos via SQLite*/}
+    tx.executeSql(
+      'Drop table produtos;'
+    );
+    console.log(tx);
+    console.log('Tabela  produtos dropada com sucesso');
+  });
+
+  db.transaction(tx => {
+    {/* Criando a tabela de produtos via SQLite*/}
+    tx.executeSql(
+      'create table if not exists produtos (CDPRO text, CDPROREF text,DEPROLONG text, IDATIVO text, DEPRO text, CDUNMED text, VLVENDA integer, VLVENDAMIN numeric, VLPESOMED numeric, VALOR numeric, QTSALDO numeric, PEDESCMAX numeric);'
+    );
+    console.log(tx);
+    console.log('Tabela produtos criada com sucesso');
+  });
+}
+
+
 lerclientes() {
   db.transaction((tx) =>{
-    tx.executeSql('select rowid FROM clientes',[],(tx,results) => {
+    tx.executeSql('select * from clientes',[],(tx,results) => {
       var len = results.rows.length;
       console.log(len);
       var row = results.rows;
@@ -147,7 +180,7 @@ lerclientes() {
 
 lerprodutos() {
   db.transaction((tx) =>{
-    tx.executeSql('select rowid from produtos',[],(tx,results) => {
+    tx.executeSql('select * from produtos',[],(tx,results) => {
       var len = results.rows.length;
       console.log(len);
       var row = results.rows;
@@ -168,6 +201,36 @@ envia2ERP() {
     console.log('Enviado com sucesso')
   });
 }
+
+_Modal = (text, onPress) => (
+  <View>
+    <View style={{marginTop:'30%',marginBottom:'20%',marginLeft:'40%',marginRight:'40%'}}>
+      <ProgressCircle
+        percent={this.state.percent}
+        radius={70}
+        borderWidth={8}
+        color="#3399FF"
+        shadowColor="#999"
+        bgColor="#fff"
+        >
+        <Text style={{ fontSize: 18 }}>{this.state.percent+'%'}</Text>
+      </ProgressCircle>
+    </View>
+
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.button}>
+        <Text style={styles.title}>{text}</Text>
+      </View>
+    </TouchableOpacity>
+  </View>
+);
+
+_renderModalContent = () => (
+  <View style={styles.modalContent}>
+    {this._Modal('Fechar', () => this.setState({ visibleModal: null }))}
+  </View>
+);
+
 
 render () {
   return (
@@ -213,7 +276,7 @@ render () {
         small
         icon={{name: 'trash', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
         backgroundColor= '#ff4d4d'
-        onPress={() => Alert.alert('teste button ok')}
+        onPress={() => this.limpaprodutos()}
         title='LIMPAR DADOS PRODUTOS' />
 
       <Button
@@ -229,7 +292,24 @@ render () {
         backgroundColor= '#000000'
         onPress={() => envia2ERP()}
         title='SINCRONIZAR COM ERP' />
+      <Button
+        small
+        icon={{name: 'server', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+        backgroundColor= '#000000'
+        onPress={() => this.setState({ visibleModal: 1 })}
+        title='MODAL' />
+        <View>
+          <Modal isVisible={this.state.visibleModal === 1}>
+            {this._renderModalContent()}
+          </Modal>
+        </View>
+
     </View>
+
+
+
+
+
   )
 }
 }
@@ -258,6 +338,9 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   button: {
+    textAlign:'center',
+    marginLeft:'30%',
+    marginRight:'30%',
     backgroundColor: "skyblue",
     paddingTop: 7,
     paddingBottom: 7,
@@ -279,6 +362,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     color: "white"
+  },
+  modalContent: {
+    textAlign:'center',
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  bottomModal: {
+    justifyContent: 'flex-end',
+    margin: 0,
   }
 });
 
