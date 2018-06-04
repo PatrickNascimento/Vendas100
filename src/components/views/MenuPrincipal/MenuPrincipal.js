@@ -80,7 +80,7 @@ export default class App extends React.Component {
           <View style={main}>
 
             <TouchableOpacity
-              onPress={() => Actions.listPedidos()}>
+              onPress={() => Actions.pedidos()}>
               <Image style={icon} source={require('./imgs/carrinho.png')} />
               <Text style={ic1}>Novo pedido</Text>
             </TouchableOpacity>
@@ -99,7 +99,7 @@ export default class App extends React.Component {
 
           <View style={main}>
             <TouchableOpacity
-              onPress={() => metasis('acao')}>
+              onPress={() => Actions.pedidoResumo()}>
               <Image style={icon} source={require('./imgs/historico.png')} />
               <Text style={ic3}>Histórico</Text>
             </TouchableOpacity>

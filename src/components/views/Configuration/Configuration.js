@@ -24,7 +24,7 @@ class Configuration extends Component {
   }
 
   componentWillMount () {
-    axios.get('http://10.1.1.39:211/client')
+    axios.post('http://localhost:3000/cliente')
     .then(resp => {
       //console.log(resp.data.result)
       this.setState({ items : resp.data.result })
@@ -49,7 +49,9 @@ axios.get('http://10.1.1.39:211/produtos')
 ).catch(e => console.log('error no catch: ', e))
 }
 
+
 sync(code,name,city,key){
+  {/*CodigoAntigo Modelo de exemplo by Patrick*/}
   db.transaction(
     tx => {
       tx.executeSql('insert into usuarios (codigo,nome,email,comentario) values (?,?,?,?)',[code,name,city,key]);
@@ -58,13 +60,12 @@ sync(code,name,city,key){
   );
 }
 SyncSend(){
+  {/*CodigoAntigo Modelo de exemplo by Patrick*/}
   return this.state.items.map((item) =>(
     this.sync(item.CODE,item.NAME,item.CITY,item.KEY)
   )
 )
 }
-
-
 
 
 syncClientes(CDCLIFOR,NMFANTASIA, NUFONE,DEENDERECO,DEBAIRRO,NMCID,CDUF,DEOBS,TPSTATUS,ATIVO,CPFCNPJ,VLSALDO,DEPRAZO,VLSALDODEV,NMCLIFOR){
@@ -95,7 +96,6 @@ syncProdutos(CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,V
   db.transaction(
     tx => {
       tx.executeSql('insert into produtos (CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VLPESOMED,VALOR,QTSALDO,PEDESCMAX) values (?,?,?,?,?,?,?,?,?,?,?,?)',[CDPRO,CDPROREF,DEPROLONG,IDATIVO,DEPRO,CDUNMED,VLVENDA,VLVENDAMIN,VLPESOMED,VALOR,QTSALDO,PEDESCMAX]);
-
     }
   );
 }
@@ -146,13 +146,14 @@ limpaclientes(){
 }
 
 limpaprodutos(){
-  db.transaction(tx => {
+  db.transaction(txs => {
     {/* dropar a tabela de produtos via SQLite*/}
-    tx.executeSql(
+    txs.executeSql(
       'Drop table produtos;'
     );
-    console.log(tx);
+    console.log(txs);
     console.log('Tabela  produtos dropada com sucesso');
+    Alert.alert('Tabela  produtos dropada com sucesso');
   });
 
   db.transaction(tx => {
@@ -290,7 +291,7 @@ render () {
         small
         icon={{name: 'server', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
         backgroundColor= '#000000'
-        onPress={() => envia2ERP()}
+        onPress={() => this.envia2ERP()}
         title='SINCRONIZAR COM ERP' />
       <Button
         small

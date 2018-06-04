@@ -57,7 +57,7 @@ export default class ListPedidos extends Component {
 
   dados(i){
     exlist = {i}
-    Actions.client();
+    Actions.pedidoNovo();
   }
 
   parseData() {
@@ -69,7 +69,7 @@ export default class ListPedidos extends Component {
         if(len>0){
           var row = results.rows._array;
           dataSource = row;
-          //console.log(row);
+          console.log(row);
           this.setState({row});
         }
       });

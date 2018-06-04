@@ -94,7 +94,7 @@ export default class ProductsList extends Component {
 
             <View style={{marginTop:15}}>
                 <Text>
-                    <Text style={{fontWeight: 'bold'}}>*Ultima Atualização em 02-05-2018 10:53</Text>
+                    <Text style={{fontWeight: 'bold'}}>*Ultima Atualização em 17-05-2018 17:57</Text>
                   </Text>
                 </View>
 
@@ -132,37 +132,12 @@ export default class ProductsList extends Component {
           if(len>0){
             var row = results.rows._array;
             dataSource = row;
-            //console.log(row);
+            console.log(dataSource);
             this.setState({row});
           }
         });
       });
     }
-
-    renderListItems = () => this.state.row.map((item) => (
-
-      <ProductItem
-        id={item.rowid}
-        produto={item.DEPRO}
-        codPro={item.CDPRO}
-        descLong={item.DEPROLONG}
-        vlvenda={item.VLVENDA}
-        peso={item.VLPESOMED}
-        saldo={item.QTSALDO}
-
-        onPress={() => {
-          //Alert.alert('Dados enviados')
-          this.setState({cod: item.CDPRO })
-          this.setState({desc: item.DEPRO })
-          this.setState({descLong: item.DEPROLONG })
-          this.setState({valor: item.VLVENDA })
-          this.setState({peso: item.VLPESOMED })
-          this.setState({saldo: item.QTSALDO })
-          this.setState({ visibleModal: 1 })}
-        } />
-      )
-
-    );
 
     renderRow = (source) => {
       return <ProductItem
@@ -222,7 +197,7 @@ export default class ProductsList extends Component {
           <FlatList
                   data={dataSource}
                   renderItem={this.renderRow}
-            />
+          />
 
         </View>
       );

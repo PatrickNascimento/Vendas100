@@ -11,6 +11,7 @@
     "react-native-progress": "^3.4.0",
     "react-native-progress-circle": "^2.0.0",
     "react-native-router-flux": "^4.0.0-beta.21",
+    "react-native-selectme": "^1.2.3",
     "react-native-textinput-effects": "^0.4.2",
     "react-native-vector-icons": "^4.6.0",
     "react-redux": "^5.0.6",
@@ -22,7 +23,7 @@
     "babel-preset-react-native": "4.0.0",
     "jest": "22.4.2",
     "react-test-renderer": "16.3.0-alpha.1",
-     "react-native": "https://github.com/expo/react-native/archive/sdk-26.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-26.0.0.tar.gz"
   },
   "jest": {
     "preset": "react-native"

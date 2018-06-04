@@ -3,7 +3,7 @@ import { TouchableBox, BoxSection } from '../../utils'
 import { View, Text, Image, StyleSheet } from 'react-native'
 
 const ProductItem = (props) => {
-  //  console.log('-------------')
+    console.log('-------------')
   //  console.log(props)
   return (
     <TouchableBox
