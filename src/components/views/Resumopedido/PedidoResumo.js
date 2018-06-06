@@ -78,6 +78,7 @@ class PedidoNovo extends Component {
     return (
       <View style={{flex: 1, backgroundColor: '#FFFFFF'}} >
         <Topo></Topo>
+
         <ScrollView>
           <Text style={styles.pedidos}>
                {len = 0 ? 'Este pedido ainda não tem itens' : '' }

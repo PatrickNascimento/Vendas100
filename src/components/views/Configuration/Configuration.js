@@ -24,13 +24,15 @@ class Configuration extends Component {
   }
 
   componentWillMount () {
-    axios.post('http://localhost:3000/cliente')
+
+    axios.post('http://10.1.1.24:3000/adm')
     .then(resp => {
-      //console.log(resp.data.result)
+      console.log(resp.data.result)
       this.setState({ items : resp.data.result })
     }
 
   ).catch(e => console.log('error no catch: ', e))
+
 
   axios.get('http://10.1.1.39:211/clientemobile')
   .then(resp => {
@@ -47,6 +49,16 @@ axios.get('http://10.1.1.39:211/produtos')
 }
 
 ).catch(e => console.log('error no catch: ', e))
+
+axios.get('http://10.1.1.24:3000/adm')
+.then(resp => {
+  console.log(resp.data.result)
+  this.setState({ marcelo : resp.data.result })
+}
+
+).catch(e => console.log('error nodddd catch: ', e))
+
+
 }
 
 
@@ -62,7 +74,15 @@ sync(code,name,city,key){
 SyncSend(){
   {/*CodigoAntigo Modelo de exemplo by Patrick*/}
   return this.state.items.map((item) =>(
-    this.sync(item.CODE,item.NAME,item.CITY,item.KEY)
+    console.log(item.CODE,item.NAME,item.CITY,item.KEY)
+  )
+)
+}
+
+marcelo(){
+  {/*CodigoAntigo Modelo de exemplo by Patrick*/}
+  return this.state.marcelo.map((item) =>(
+    console.log(item)
   )
 )
 }
@@ -266,6 +286,13 @@ render () {
         onPress={() => this.lerclientes()}
         title='EXIBIR CLIENTE NO TERMINAL' />
 
+        <Button
+          small
+          icon={{name: 'search', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
+          backgroundColor= '#222222'
+          onPress={() => this.marcelo()}
+          title='MARCELO' />
+
       <Button
         small
         icon={{name: 'th-large', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}
@@ -293,6 +320,7 @@ render () {
         backgroundColor= '#000000'
         onPress={() => this.envia2ERP()}
         title='SINCRONIZAR COM ERP' />
+
       <Button
         small
         icon={{name: 'server', type: 'font-awesome', buttonStyle: styles.someButtonStyle }}

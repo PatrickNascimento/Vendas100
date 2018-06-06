@@ -1,20 +1,17 @@
 import {SQLite} from 'expo';
 import React, {Component} from "react";
-import ProductItem from './ProductItem';
 import {Input} from 'react-native-elements';
 import Modal from 'react-native-modal'; // 2.4.0
 import {Hoshi,} from 'react-native-textinput-effects';
 import {FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
 import {Actions} from "react-native-router-flux";
 import { numberToReal } from '../../../Functions';
+import ProductItem from './ProductItem'
 
 var exlist = '';
 dataSource = [];
 
 const db = SQLite.openDatabase('db.db');
-
-
-
 export default class ProductsList extends Component {
 
   componentDidMount() {
@@ -329,7 +326,7 @@ criar(){
       fontSize: 18,
       color: "white"
     },
-    datalista: {
+    datalista: {      
       marginBottom: 5,
       padding: 20,
       marginTop: 5,

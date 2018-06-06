@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 
 const TouchableBox = (props) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={props.onPress}
       style={[styles.containerStyle, props.style]}>
       {props.children}
@@ -26,7 +26,7 @@ const styles = {
     marginRight: 10,
     marginTop: 3,
     marginBottom: 3,
-    padding: 20,
+    padding: 10,
   }
 };
 
